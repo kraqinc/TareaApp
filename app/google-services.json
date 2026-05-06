@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "743376459667",
+    "project_id": "profeloop-89a8c",
+    "storage_bucket": "profeloop-89a8c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743376459667:android:6e32cbcbc0e3d2ef783a66",
+        "android_client_info": {
+          "package_name": "com.profeloop.kalanba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "743376459667-kn4agsrblfvl31gijllp76u8j2j0vl44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC40GDchpdOyxXaBLgX2Xr3Cvge_3OIk38"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "743376459667-kn4agsrblfvl31gijllp76u8j2j0vl44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
