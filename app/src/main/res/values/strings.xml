@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TareaApp</string>
+    <string name="app_subtitle">I.E. Del Pinar</string>
+
+    <!-- Auth -->
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="btn_register">Crear Cuenta</string>
+    <string name="link_register">¿No tienes cuenta? Regístrate aquí</string>
+    <string name="link_login">¿Ya tienes cuenta? Inicia sesión</string>
+
+    <!-- Home -->
+    <string name="title_primaria">Primaria</string>
+    <string name="title_bachillerato">Bachillerato</string>
+    <string name="hint_select_grade">Selecciona un grado</string>
+
+    <!-- Subjects -->
+    <string name="asig_quimica">Química</string>
+    <string name="asig_biologia">Biología</string>
+    <string name="asig_comprension">Comprensión Lectora</string>
+    <string name="asig_matematicas">Matemáticas</string>
+    <string name="asig_ingles">Inglés</string>
+    <string name="asig_estadistica">Estadística</string>
+    <string name="asig_emprendimiento">Emprendimiento</string>
+    <string name="asig_informatica">Informática</string>
+    <string name="asig_fisica">Física</string>
+    <string name="asig_etica">Ética</string>
+    <string name="asig_religion">Religión</string>
+    <string name="asig_geometria">Geometría</string>
+    <string name="asig_competencias">Competencias Ciudadanas</string>
+    <string name="asig_lenguaje">Lenguaje</string>
+    <string name="asig_sociales">Sociales</string>
+    <string name="asig_artistica">Artística</string>
+    <string name="asig_ed_fisica">Educación Física</string>
+
+    <!-- Tasks -->
+    <string name="title_publish_task">Publicar Tarea</string>
+    <string name="title_task_detail">Detalle de Tarea</string>
+    <string name="btn_publish">Publicar Tarea</string>
+    <string name="btn_submit">Enviar Tarea</string>
+    <string name="btn_download">Descargar</string>
+    <string name="no_tasks">No hay tareas en este período</string>
+    <string name="already_teacher">Ya hay un/a profesor/a en esta asignatura</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_name">TareaApp Notificaciones</string>
+    <string name="notif_tarea_enviada_title">Nueva entrega recibida</string>
+    <string name="notif_revisando_title">Tu tarea está siendo revisada</string>
+    <string name="notif_calificada_title">¡Tu tarea fue calificada!</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_notifications">Notificaciones</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Menu -->
+    <string name="menu_logout">Cerrar sesión</string>
+</resources>
