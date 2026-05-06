@@ -40,6 +40,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK artifact
@@ -56,10 +58,7 @@ jobs:
           tag_name: v${{ github.run_number }}
           name: "TareaApp v${{ github.run_number }}"
           body: |
-            ## 📱 TareaApp - App de Tareas Escolares
-            
-            Descarga el APK e instálalo en tu Android.
-            
+            ## Descarga el APK e instálalo en tu Android.
             > Activa "Instalar de fuentes desconocidas" en Ajustes si es necesario.
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
