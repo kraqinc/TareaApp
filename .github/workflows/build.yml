@@ -1,4 +1,4 @@
-name: Build TareaApp APK
+name: Build ProfeLoop APK
 
 on:
   push:
@@ -44,11 +44,15 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: ./gradlew assembleDebug --stacktrace
 
+      - name: Rename APK
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/ProfeLoop-debug.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TareaApp-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: ProfeLoop-debug
+          path: app/build/outputs/apk/debug/ProfeLoop-debug.apk
           retention-days: 30
 
       - name: Create Release with APK
@@ -56,11 +60,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          name: "TareaApp v${{ github.run_number }}"
+          name: "ProfeLoop v${{ github.run_number }}"
           body: |
             ## Descarga el APK e instálalo en tu Android.
             > Activa "Instalar de fuentes desconocidas" en Ajustes si es necesario.
-          files: app/build/outputs/apk/debug/app-debug.apk
+          files: app/build/outputs/apk/debug/ProfeLoop-debug.apk
           draft: false
           prerelease: false
         env:
