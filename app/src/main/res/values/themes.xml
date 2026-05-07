@@ -20,6 +20,12 @@
         <item name="android:statusBarColor">@color/primary_dark</item>
     </style>
 
+    <style name="Theme.ProfeLoop.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.ProfeLoop.NoActionBar</item>
+    </style>
+
     <style name="Theme.ProfeLoop.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.ProfeLoop.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
