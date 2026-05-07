@@ -57,4 +57,6 @@
 
     <!-- Menu -->
     <string name="menu_logout">Cerrar sesión</string>
+    <string name="grade_note_hint">Escribe un comentario o nota...</string>
+    <string name="btn_grade">Calificar</string>
 </resources>
