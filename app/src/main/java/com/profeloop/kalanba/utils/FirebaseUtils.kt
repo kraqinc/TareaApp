@@ -2,7 +2,6 @@ package com.profeloop.kalanba.utils
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.profeloop.kalanba.models.AppNotification
 import com.profeloop.kalanba.models.Submission
@@ -11,181 +10,117 @@ import com.profeloop.kalanba.models.User
 import kotlinx.coroutines.tasks.await
 
 object FirebaseUtils {
-
     val auth: FirebaseAuth get() = FirebaseAuth.getInstance()
     val db: FirebaseFirestore get() = FirebaseFirestore.getInstance()
     val storage: FirebaseStorage get() = FirebaseStorage.getInstance()
-
-    val currentUser get() = auth.currentUser
-    val currentUid get() = auth.currentUser?.uid
-
-    // ─── Users ───────────────────────────────────────────────────────────────
+    val currentUid: String? get() = auth.currentUser?.uid
 
     suspend fun getUserProfile(uid: String): User? {
         return try {
-            val doc = db.collection(Constants.COLLECTION_USERS).document(uid).get().await()
-            doc.toObject(User::class.java)?.copy(uid = doc.id)
+            db.collection(Constants.COLLECTION_USERS).document(uid).get().await()
+                .toObject(User::class.java)
         } catch (e: Exception) {
             null
         }
     }
 
     suspend fun saveUserProfile(user: User) {
-        db.collection(Constants.COLLECTION_USERS)
-            .document(user.uid)
-            .set(user)
-            .await()
+        db.collection(Constants.COLLECTION_USERS).document(user.uid).set(user).await()
     }
 
-    suspend fun updateFcmToken(uid: String, token: String) {
-        db.collection(Constants.COLLECTION_USERS)
-            .document(uid)
-            .update("fcmToken", token)
-            .await()
-    }
-
-    // ─── Tasks ────────────────────────────────────────────────────────────────
-
-    suspend fun getTasksForGradeSubjectPeriod(
-        grado: Int,
-        asignatura: String,
-        periodo: Int
-    ): List<Task> {
+    suspend fun getTasks(grado: Int, asignatura: String, periodo: Int): List<Task> {
         return try {
-            val snapshot = db.collection(Constants.COLLECTION_TASKS)
+            db.collection(Constants.COLLECTION_TASKS)
                 .whereEqualTo("grado", grado)
                 .whereEqualTo("asignatura", asignatura)
                 .whereEqualTo("periodo", periodo)
-                .whereEqualTo("activa", true)
-                .get()
-                .await()
-            snapshot.documents.mapNotNull { doc ->
-                doc.toObject(Task::class.java)?.copy(id = doc.id)
-            }
+                .get().await()
+                .toObjects(Task::class.java)
         } catch (e: Exception) {
             emptyList()
         }
     }
 
-    suspend fun publishTask(task: Task): String {
-        val ref = db.collection(Constants.COLLECTION_TASKS).document()
-        val withId = task.copy(id = ref.id)
-        ref.set(withId).await()
-        return ref.id
+    suspend fun publishTask(task: Task): Boolean {
+        return try {
+            val docRef = db.collection(Constants.COLLECTION_TASKS).document()
+            db.collection(Constants.COLLECTION_TASKS).document(docRef.id)
+                .set(task.copy(id = docRef.id)).await()
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    // ─── Subject Assignment ───────────────────────────────────────────────────
-
-    suspend fun getSubjectTeacher(grado: Int, asignatura: String): User? {
+    suspend fun submitTask(submission: Submission): Boolean {
         return try {
-            val snap = db.collection(Constants.COLLECTION_USERS)
+            val docRef = db.collection(Constants.COLLECTION_SUBMISSIONS).document()
+            db.collection(Constants.COLLECTION_SUBMISSIONS).document(docRef.id)
+                .set(submission.copy(id = docRef.id)).await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun getSubmissionsForTask(taskId: String): List<Submission> {
+        return try {
+            db.collection(Constants.COLLECTION_SUBMISSIONS)
+                .whereEqualTo("taskId", taskId).get().await()
+                .toObjects(Submission::class.java)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun getMySubmission(taskId: String, estudianteId: String): Submission? {
+        return try {
+            db.collection(Constants.COLLECTION_SUBMISSIONS)
+                .whereEqualTo("taskId", taskId)
+                .whereEqualTo("estudianteId", estudianteId)
+                .get().await().toObjects(Submission::class.java).firstOrNull()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun gradeSubmission(submissionId: String, nota: String, comentario: String) {
+        db.collection(Constants.COLLECTION_SUBMISSIONS).document(submissionId)
+            .update(mapOf(
+                "nota" to nota,
+                "comentarioProfe" to comentario,
+                "estado" to Constants.ESTADO_CALIFICADO
+            )).await()
+    }
+
+    suspend fun getNotifications(uid: String): List<AppNotification> {
+        return try {
+            db.collection(Constants.COLLECTION_NOTIFICATIONS)
+                .whereEqualTo("targetUserId", uid)
+                .get().await().toObjects(AppNotification::class.java)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun sendNotification(notification: AppNotification) {
+        try {
+            val docRef = db.collection(Constants.COLLECTION_NOTIFICATIONS).document()
+            db.collection(Constants.COLLECTION_NOTIFICATIONS).document(docRef.id)
+                .set(notification.copy(id = docRef.id)).await()
+        } catch (e: Exception) {
+            // ignore
+        }
+    }
+
+    suspend fun checkTeacherInSubject(grado: Int, asignatura: String): String? {
+        return try {
+            val docs = db.collection(Constants.COLLECTION_USERS)
                 .whereEqualTo("rol", Constants.ROL_PROFESOR)
-                .whereEqualTo("grado", grado)
-                .whereArrayContains("asignaturas", asignatura)
-                .get()
-                .await()
-            if (snap.isEmpty) null
-            else {
-                val doc = snap.documents.first()
-                doc.toObject(User::class.java)?.copy(uid = doc.id)
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // ─── Submissions ──────────────────────────────────────────────────────────
-
-    suspend fun submitTask(submission: Submission): String {
-        val ref = db.collection(Constants.COLLECTION_SUBMISSIONS).document()
-        val withId = submission.copy(id = ref.id)
-        ref.set(withId).await()
-        return ref.id
-    }
-
-    suspend fun getSubmissionsForTask(tareaId: String): List<Submission> {
-        return try {
-            val snap = db.collection(Constants.COLLECTION_SUBMISSIONS)
-                .whereEqualTo("tareaId", tareaId)
-                .get()
-                .await()
-            snap.documents.mapNotNull { it.toObject(Submission::class.java)?.copy(id = it.id) }
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-
-    suspend fun getStudentSubmissionForTask(tareaId: String, estudianteUid: String): Submission? {
-        return try {
-            val snap = db.collection(Constants.COLLECTION_SUBMISSIONS)
-                .whereEqualTo("tareaId", tareaId)
-                .whereEqualTo("estudianteUid", estudianteUid)
-                .get()
-                .await()
-            if (snap.isEmpty) null
-            else {
-                val doc = snap.documents.first()
-                doc.toObject(Submission::class.java)?.copy(id = doc.id)
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun updateSubmissionStatus(submissionId: String, estado: String) {
-        db.collection(Constants.COLLECTION_SUBMISSIONS)
-            .document(submissionId)
-            .update("estado", estado, "revisadoAt", System.currentTimeMillis())
-            .await()
-    }
-
-    suspend fun gradeSubmission(submissionId: String, calificacion: Double, comentario: String) {
-        db.collection(Constants.COLLECTION_SUBMISSIONS)
-            .document(submissionId)
-            .update(
-                mapOf(
-                    "estado" to Constants.ESTADO_CALIFICADA,
-                    "calificacion" to calificacion,
-                    "comentarioProfesor" to comentario,
-                    "revisadoAt" to System.currentTimeMillis()
-                )
-            )
-            .await()
-    }
-
-    // ─── Notifications ────────────────────────────────────────────────────────
-
-    suspend fun saveNotification(notification: AppNotification) {
-        val ref = db.collection(Constants.COLLECTION_NOTIFICATIONS).document()
-        ref.set(notification.copy(id = ref.id)).await()
-    }
-
-    suspend fun getNotificationsForUser(uid: String): List<AppNotification> {
-        return try {
-            val snap = db.collection(Constants.COLLECTION_NOTIFICATIONS)
-                .whereEqualTo("destinatarioUid", uid)
-                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                .limit(50)
-                .get()
-                .await()
-            snap.documents.mapNotNull { it.toObject(AppNotification::class.java)?.copy(id = it.id) }
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-
-    suspend fun markNotificationRead(notificationId: String) {
-        db.collection(Constants.COLLECTION_NOTIFICATIONS)
-            .document(notificationId)
-            .update("leida", true)
-            .await()
-    }
-
-    // ─── FCM Token ────────────────────────────────────────────────────────────
-
-    suspend fun getFcmToken(): String? {
-        return try {
-            FirebaseMessaging.getInstance().token.await()
+                .whereArrayContains("asignaturas", "$grado-$asignatura")
+                .get().await()
+            if (docs.isEmpty) null
+            else docs.toObjects(User::class.java).firstOrNull()?.nombre
         } catch (e: Exception) {
             null
         }
