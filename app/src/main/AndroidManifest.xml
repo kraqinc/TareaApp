@@ -2,10 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -15,52 +12,42 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ProfeLoop.SplashScreen"
-        android:usesCleartextTraffic="false">
+        android:theme="@style/Theme.ProfeLoop.SplashScreen">
 
-        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Auth Activities -->
         <activity
             android:name=".auth.LoginActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/Theme.ProfeLoop.NoActionBar" />
 
         <activity
             android:name=".auth.RegisterActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/Theme.ProfeLoop.NoActionBar" />
 
-        <!-- AI Assistant Activity -->
         <activity
             android:name=".ai.AiAssistantActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:theme="@style/Theme.ProfeLoop.NoActionBar" />
 
-        <!-- Task Activities -->
         <activity
             android:name=".tasks.TaskDetailActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:theme="@style/Theme.ProfeLoop.NoActionBar" />
 
         <activity
             android:name=".tasks.PublishTaskActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName=".MainActivity" />
+            android:theme="@style/Theme.ProfeLoop.NoActionBar" />
 
-        <!-- Firebase Cloud Messaging Service -->
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
@@ -69,21 +56,9 @@
             </intent-filter>
         </service>
 
-        <!-- FCM Default Notification Channel -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="profeloop_channel" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/md_theme_primary" />
-
-        <!-- FileProvider for sharing files -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="com.profeloop.kalanba.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -92,5 +67,4 @@
         </provider>
 
     </application>
-
 </manifest>
