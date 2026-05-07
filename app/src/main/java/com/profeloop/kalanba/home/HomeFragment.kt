@@ -34,8 +34,10 @@ class HomeFragment : Fragment() {
         items.addAll(6..9)
 
         val adapter = GradeListAdapter(items) { grade ->
-            val action = HomeFragmentDirections.actionHomeToSubjectList(grade)
-            findNavController().navigate(action)
+            val bundle = Bundle().apply {
+                putInt("extra_grado", grade)
+            }
+            findNavController().navigate(R.id.action_home_to_subjectList, bundle)
         }
 
         binding.rvGrades.layoutManager = LinearLayoutManager(requireContext())
