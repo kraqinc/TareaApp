@@ -7,7 +7,7 @@
 -keep class com.google.android.gms.** { *; }
 
 # Models - keep for Firestore serialization
--keep class com.tareaapp.models.** { *; }
+-keep class com.profeloop.kalanba.models.** { *; }
 
 # Keep Kotlin coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
